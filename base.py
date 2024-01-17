@@ -185,8 +185,8 @@ class TermArtist:
         
         Examples:
         ---------
-        >>> print(ColorRGB.FG(255, 0, 0) + "This text is red")
-        >>> print(ColorRGB.BG(0, 0, 255) + "This text has a blue background")
+        >>> print(TrueColor.FG(255, 0, 0) + "This text is red")
+        >>> print(TrueColor.BG(0, 0, 255) + "This text has a blue background")
         '''
         FG = lambda r, g, b: f'\033[38;2;{r};{g};{b}m'
         BG = lambda r, g, b: f'\033[48;2;{r};{g};{b}m'
