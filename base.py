@@ -1,3 +1,12 @@
+'This module consists of commonly used functions and classes.'
+
+""" =================================================================
+| base.py
+|
+| Created by Jack on 01/20, 2024
+| Copyright © 2024 jacktogon. All rights reserved.
+================================================================= """
+
 #NOTE: `base.py` will not be importing anything else other than the standard library
 
 import os, sys, time, re
@@ -6,8 +15,11 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 __all__ = (
-    'TermArtist',       
+    'TermArtist', 'TimeConverter',
+    'get_venv_path', 'try_import_or_install',
+    'read_file_generator', 'write_filebytes',
 )
+
 
 class TermArtist:
     '''
@@ -52,35 +64,39 @@ class TermArtist:
         SHOW             = '\033[?25h'
         
         @staticmethod
-        def move_cursor_up(lines=1):
+        def move_up(lines=1):
             print(TermArtist.Cursor.UP.format(lines), end='')
 
         @staticmethod
-        def move_cursor_down(lines=1):
+        def move_down(lines=1):
             print(TermArtist.Cursor.DOWN.format(lines), end='')
 
         @staticmethod
-        def move_cursor_forward(columns=1):
+        def move_forward(columns=1):
             print(TermArtist.Cursor.FORWARD.format(columns), end='')
 
         @staticmethod
-        def move_cursor_back(columns=1):
+        def move_back(columns=1):
             print(TermArtist.Cursor.BACK.format(columns), end='')
+            
+        @staticmethod
+        def set_pos(line: int, column: int):
+            print(TermArtist.Cursor.SET_POSITION.format(line, column), end="")
 
         @staticmethod
-        def save_cursor_position():
+        def save_pos():
             print(TermArtist.Cursor.SAVE_POSITION, end='')
 
         @staticmethod
-        def restore_cursor_position():
+        def restore_pos():
             print(TermArtist.Cursor.RESTORE_POSITION, end='')
 
         @staticmethod
-        def hide_cursor():
+        def hide():
             print(TermArtist.Cursor.HIDE, end='')
 
         @staticmethod
-        def show_cursor():
+        def show():
             print(TermArtist.Cursor.SHOW, end='')
             
     class Screen:
@@ -196,6 +212,203 @@ class TermArtist:
         DEBUG = "\x1b[1;90;43m"
         ERROR = "\x1b[1;97;101m"
         
+
+
+class TimeConverter:
+    ''' Convert time to certain format '''
+    
+    @staticmethod
+    def second_to_standard(sec: float) -> str:
+        '''
+        Convert seconds to a ISO 8601 time format, without timezone
+        If provided seconds is smaller, don't show.
+
+        Parameters:
+        -----------
+        - `sec`: Number of seconds
+
+        Returns:
+        --------
+        - `str`: [yy:][mm:][dd:]hh:mm:ss[.ssss]
+        '''
+        # Constants for time conversion
+        seconds_in_minute = 60
+        seconds_in_hour   = 3600
+        seconds_in_day    = 86400
+        seconds_in_month  = 2629743     # Average month length in seconds (30.44 days)
+        seconds_in_year   = 31556926    # Average year length in seconds (365.25 days)
+
+        # Calculate each time component
+        years, remainder          = divmod(sec, seconds_in_year)
+        months, remainder         = divmod(remainder, seconds_in_month)
+        days, remainder           = divmod(remainder, seconds_in_day)
+        hours, remainder          = divmod(remainder, seconds_in_hour)
+        minutes, seconds          = divmod(remainder, seconds_in_minute)
+        int_seconds, frac_seconds = divmod(seconds, 1)
+
+        res = ""
+        if years > 0:
+            res += f"{int(years):02}-"
+        if months > 0:
+            res += f"{int(months):02}-"
+        if days > 0:
+            res += f"{int(days):02}T"
+            
+        res += f"{int(hours):02}h:{int(minutes):02}m:"
         
-if __name__ == "__main__":
-    print(TermArtist.Composition.DEBUG, "hej hej", TermArtist.RESET)
+        if frac_seconds > 0:
+            res += f"{int(int_seconds):02}.{int(frac_seconds * 1e4):04}s"
+        else:
+            res += f"{int(int_seconds):02}s"
+
+        return res
+
+
+    @staticmethod
+    def unix_to_datestring(unix: float) -> str:
+        ''' 
+        Convert unix time to date string based on current system time zone
+        
+        Params:
+        -------
+        - `unix`: unix time
+        
+        Returns:
+        --------
+        - `str`: %Y-%m-%d %H:%M:%S.%f
+        '''
+        sys_timezone = datetime.now().astimezone().tzinfo               # Get the local timezone of the system
+        utc_time     = datetime.fromtimestamp(unix, tz=timezone.utc)    # Get the current time in UTC
+        local_date   = utc_time.astimezone(sys_timezone)                # Convert to the local timezone
+        date_string  = local_date.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] # Format datetime object, including milliseconds
+        return f"{date_string} {local_date.tzname()}"
+    
+    @staticmethod
+    def time_to_seconds(time_str):
+        parts = time_str.split(":")
+
+        # Initialize hours, minutes, and seconds
+        hours, minutes, seconds = 0, 0, 0
+
+        if len(parts) == 3:
+            # Format is hours:minutes:seconds
+            hours, minutes, seconds = int(parts[0]), int(parts[1]), int(parts[2])
+        elif len(parts) == 2:
+            # Format is minutes:seconds
+            minutes, seconds = int(parts[0]), int(parts[1])
+        else:
+            raise ValueError("Invalid time format")
+
+        # Convert everything to seconds
+        total_seconds = hours * 3600 + minutes * 60 + seconds
+
+        return total_seconds
+    
+
+# ============================================================================
+# Functions
+# ============================================================================
+def get_venv_path() -> str | None:
+    ''' Get path to current venv '''
+    return os.environ.get('VIRTUAL_ENV')
+
+def try_import_or_install(
+    module:     str,
+    package:    str     = None,
+    version:    str     = None
+) -> None:
+    '''
+    Attempts to import a module. If not present, attempts to install it.
+    
+    Params:
+    -------
+    - `module`:  name of the module to try to import.
+    - `package`: name of the package to try to install. Defaults to the module name if not provided.
+    - `version`: version of the package to install. If not provided, the latest version is installed.
+    '''
+    package = package or module
+    if version: package += f'=={version}'
+
+    try:
+        __import__(module)
+    except ImportError:
+        print(f"Module {TermArtist.Foreground.BRIGHT_CYAN}{module}{TermArtist.RESET} not found and will be installed")
+        if not (
+            get_venv_path() or hasattr(sys, 'real_prefix') or
+            (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+        ):
+            print("It's recommended to run this script in a virtual environment.")
+
+        match sys.platform:
+            case "win32":
+                print("Performing installation on Windows OS")
+            case "darwin":
+                print("Performing installation on macOS")
+            case "linux":
+                print("Performing installation on Linux")
+
+        # Ensure pip is available
+        try:
+            subprocess.check_call([sys.executable, '-m', 'ensurepip'])
+        except subprocess.CalledProcessError as e:
+            print(f"ensurepip failed: {e.with_traceback()}")
+
+        # Try to install the package
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+            __import__(module)
+        except subprocess.CalledProcessError as e:
+            print(f"Installation of {package} failed with error: {e.with_traceback()}")
+        except ImportError as e:
+            print(f"Module {module} could not be imported after installation: {e.with_traceback()}")
+
+    print(f"Module {TermArtist.Foreground.BRIGHT_CYAN}{module}{TermArtist.RESET} is now imported and ready to use.")
+
+
+def read_file_generator(file_path: str, chunk_size: int):
+    '''
+    Creates a generator and read file path chunk by chunk
+    
+    Examples:
+    ---------
+    >>> for _bytes in read_file_generator("abc/large.csv", self.buffer_size)
+    ...     print(_bytes)
+    ... 
+    The 2nd and 3rd parameters from generator are less commonly used.
+    But you can do something like this:
+    ...
+    >>> gen = read_file_generator("~/Desktop/icons.ai", 1024)
+    ... chunk1 = next(gen) 
+    '''
+    file_path = Path(file_path).resolve()
+    with open(file_path, 'rb') as file:
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk: break
+            yield chunk
+
+def write_filebytes(save_path: str, chunk: bytes, append=True):
+    '''
+    Writing/appending bytes to file efficiently
+    
+    Params:
+    -------
+    - `save_path`: path to the file
+    - `chunk`: bytes chunk
+    - `append`: if false, it willoverwrite the original file 
+    
+    NOTE:
+    -----
+    Both modes (writing/appending) consume memory based on the size of chunk.
+    
+    Examples:
+    ---------
+    >>> path = Path("/abc/test.txt")
+    ... write_filebytes(f"upload/{path.stem}{path.suffix}", mybytes)
+    '''
+    _save_path = Path(save_path)
+    _save_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
+    _save_path = _save_path.resolve()
+    
+    with open(_save_path, 'ab' if append else 'wb') as file:
+        file.write(chunk)
