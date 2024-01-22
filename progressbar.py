@@ -231,7 +231,6 @@ class MultiLineProgressBar:
     ... # Move cursor to the line immediately after the last progress bar
     ... multi_progress_bar.finalize()
     '''
-    
     def __init__(self, 
         num_bars:          int, 
         total_work:        float, 
