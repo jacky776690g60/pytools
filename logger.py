@@ -57,11 +57,13 @@ class Logger:
         log_level:       LogLevel,
         logfile_path:    str        = None,
         overwrite:       bool       = True,
-        daemon_name:     str        = ''
+        daemon_name:     str        = '',
+        print_time:      bool       = False
     ) -> None:
-        self.log_level = log_level
-        self.logfile_path = Path(logfile_path).resolve() if logfile_path else None
-        self.daemon_name = daemon_name
+        self.log_level     = log_level
+        self.logfile_path  = Path(logfile_path).resolve() if logfile_path else None
+        self.daemon_name   = daemon_name
+        self.print_time    = print_time
         
         self.MAX_TAG_LENGTH = max(len(s) for s in ["INFO", "DEBUG", "WARN", "ERROR"]) + 3 + len(daemon_name)
         
@@ -99,27 +101,32 @@ class Logger:
         start:      str             = "",
         end:        str             = "\n",
         is_async:   Optional[bool]  = None,
-        show_time:  bool            = True,
     ):
-        strings = []
-        tag = (f"{self.daemon_name} " if self.daemon_name else "") + level.name
-        tag = f"[{tag}]".ljust(self.MAX_TAG_LENGTH)
+        strings     = []
+        tag         = '[' + ((f"{self.daemon_name} " if self.daemon_name else "") + level.name + ']').ljust(self.MAX_TAG_LENGTH) 
+        tag_colored = color + tag + ta.RESET
+        cur_time    = tc.unix_to_datestring(time.time()).strip()
         
-        if show_time: strings.append(tc.unix_to_datestring(time.time()).strip())
+        if self.print_time: strings.append(cur_time)
         strings.append(start)
-        strings.append(tag)
+        strings.append(tag_colored)
         strings.extend(values)
         strings.append(end)
         
-        msg_no_color = ' '.join(map(str, strings))
-        strings.insert(1, color)
-        strings.insert(4, ta.RESET)
         msg_colored = ' '.join(map(str, strings))
         print(msg_colored, end="")
         
+        if not self.logfile_path: return
+        
+        if self.print_time: 
+            strings.pop(0)
+        strings[1] = tag
+        strings.insert(0, cur_time)
+        msg_no_colored = ' '.join(map(str, strings))
+        
         if is_async or (is_async is None and asyncio.iscoroutinefunction(values)):
-            return self.__save_async(level, msg_no_color)
-        return self.__save_sync(level, msg_no_color)
+            return self.__save_async(level, msg_no_colored)
+        return self.__save_sync(level, msg_no_colored)
                 
     # =============================
     # Public Functions

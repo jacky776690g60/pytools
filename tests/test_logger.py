@@ -19,7 +19,12 @@ class TestLogger(unittest.TestCase):
     # =========================================================================
     @skipIf(not TEST_SYNC, "")
     def test_SYNC(self):
-        LOGGER = Logger(log_level=LogLevel.ALL, logfile_path="./logger_sync.log", overwrite=True)
+        LOGGER = Logger(
+            log_level=LogLevel.ALL, 
+            logfile_path="./logger_sync.log", 
+            overwrite=True, 
+            print_time=True
+        )
 
         LOGGER.info("Info message.")
         LOGGER.warn("Warning message.")
@@ -29,7 +34,12 @@ class TestLogger(unittest.TestCase):
     
     @skipIf(not TEST_ASYNC, "")
     def test_ASYNC(self):
-        LOGGER = Logger(log_level=LogLevel.ALL, logfile_path="./logger_async.log", overwrite=True)
+        LOGGER = Logger(
+            log_level=LogLevel.ALL, 
+            logfile_path="./logger_async.log", 
+            overwrite=True,
+            # print_time=True
+        )
         asyncio.run(LOGGER.info("Async Info message.", is_async=True))
         asyncio.run(LOGGER.warn("Async Warning message.", is_async=True))
         asyncio.run(LOGGER.debug("Async Debugging message.", is_async=True))
