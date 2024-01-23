@@ -17,7 +17,6 @@ from datetime import datetime, timezone
 __all__ = (
     'TermArtist', 'TimeConverter',
     'get_venv_path', 'try_import_or_install',
-    'read_file_generator', 'write_filebytes',
 )
 
 
@@ -210,8 +209,7 @@ class TermArtist:
     class Composition():
         ''' Jack's combinations '''
         DEBUG = "\x1b[1;90;43m"
-        ERROR = "\x1b[1;97;101m"
-        
+        ERROR = "\x1b[1;97;101m"        
 
 
 class TimeConverter:
@@ -363,52 +361,3 @@ def try_import_or_install(
             print(f"Module {module} could not be imported after installation: {e.with_traceback()}")
 
     print(f"Module {TermArtist.Foreground.BRIGHT_CYAN}{module}{TermArtist.RESET} is now imported and ready to use.")
-
-
-def read_file_generator(file_path: str, chunk_size: int):
-    '''
-    Creates a generator and read file path chunk by chunk
-    
-    Examples:
-    ---------
-    >>> for _bytes in read_file_generator("abc/large.csv", self.buffer_size)
-    ...     print(_bytes)
-    ... 
-    The 2nd and 3rd parameters from generator are less commonly used.
-    But you can do something like this:
-    ...
-    >>> gen = read_file_generator("~/Desktop/icons.ai", 1024)
-    ... chunk1 = next(gen) 
-    '''
-    file_path = Path(file_path).resolve()
-    with open(file_path, 'rb') as file:
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk: break
-            yield chunk
-
-def write_filebytes(save_path: str, chunk: bytes, append=True):
-    '''
-    Writing/appending bytes to file efficiently
-    
-    Params:
-    -------
-    - `save_path`: path to the file
-    - `chunk`: bytes chunk
-    - `append`: if false, it willoverwrite the original file 
-    
-    NOTE:
-    -----
-    Both modes (writing/appending) consume memory based on the size of chunk.
-    
-    Examples:
-    ---------
-    >>> path = Path("/abc/test.txt")
-    ... write_filebytes(f"upload/{path.stem}{path.suffix}", mybytes)
-    '''
-    _save_path = Path(save_path)
-    _save_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
-    _save_path = _save_path.resolve()
-    
-    with open(_save_path, 'ab' if append else 'wb') as file:
-        file.write(chunk)
