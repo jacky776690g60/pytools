@@ -45,7 +45,7 @@ class JSONLoader():
                 #TODO: can only do the first layer right now
                 assert all(
                     key in m_json for key in necessary_keys
-                ), "Not all keys presented"
+                ), "Not all keys are presented in the file: {}".format(file_path)
             return m_json
         
 
