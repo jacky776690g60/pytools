@@ -15,7 +15,7 @@ def get_valid_input(
     prompt:     str,
     validator:  Callable[[str], bool],
     transform:  Callable[[str], Any]    = str
-) -> Any:
+) -> Any | None:
     """
     1. Get user input 
     2. validate it using a callback
