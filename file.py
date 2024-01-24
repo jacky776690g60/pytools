@@ -5,10 +5,12 @@ from typing import Any, List, Tuple, Union, Callable, Literal
 __all__ = 'write_to_csv',
 
 def write_to_csv(
-    headers:    List[str], 
-    row_values: List[Any], 
-    file_path:  str, 
-    overwrite:  bool=False):
+    headers:        List[str], 
+    row_values:     List[Any], 
+    file_path:      str, 
+    overwrite:      bool = False,
+    mkdir_exists:   bool = False
+) -> None:
     """
     Writes data to a CSV file.
 
@@ -21,6 +23,9 @@ def write_to_csv(
     """
     resolved_path = Path(file_path).resolve()
     write_headers = overwrite
+    
+    # Ensure the directory exists
+    os.makedirs(resolved_path.parent, exist_ok=mkdir_exists)
 
     if not overwrite and not os.path.exists(resolved_path):
         write_headers = True
