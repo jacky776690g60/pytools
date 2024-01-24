@@ -19,10 +19,12 @@ def write_to_csv(
     - `file_path`:  The path of the file where data is to be written.
     - `overwrite`:  If True, the file will be overwritten. If False, data will be appended.
     """
-    mode = 'w' if overwrite else 'a'
+    mode            = 'w' if overwrite else 'a'
+    resolved_path   = Path(file_path).resolve()
 
-    with open(Path(file_path).resolve(), mode, newline='') as file:
+    with open(resolved_path, mode, newline='') as file:
         writer = csv.writer(file)
 
-        if overwrite or not os.path.getsize(file_path): writer.writerow(headers)
+        if overwrite or not os.path.getsize(resolved_path): 
+            writer.writerow(headers)
         writer.writerow(row_values)
