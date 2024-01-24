@@ -9,7 +9,6 @@ def write_to_csv(
     row_values:     List[Any], 
     file_path:      str, 
     overwrite:      bool = False,
-    mkdir_exists:   bool = False
 ) -> None:
     """
     Writes data to a CSV file.
@@ -25,7 +24,7 @@ def write_to_csv(
     write_headers = overwrite
     
     # Ensure the directory exists
-    os.makedirs(resolved_path.parent, exist_ok=mkdir_exists)
+    os.makedirs(resolved_path.parent, exist_ok=True)
 
     if not overwrite and not os.path.exists(resolved_path):
         write_headers = True
