@@ -19,3 +19,10 @@ print(get_folderTree_list("~/Desktop/Official_docs")[:2], "...")
 from .system import *
 
 print(get_disk_usage("/"))
+
+from .networkutils import *
+
+from .shell import *
+import sys
+nb = NonBlockingStreamReader(sys.stdin)
+pe = PersistentShell()

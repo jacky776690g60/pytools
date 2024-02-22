@@ -7,11 +7,12 @@
 | Copyright © 2023 jacktogon. All rights reserved.
 ================================================================= """
 
-import os, sys, subprocess, time, ipaddress, platform, re, psutil, random
-import socket
+import os, sys, time, re, random, subprocess, ipaddress, platform
 from typing import *
-
+import psutil
+import socket
 import requests
+
 import urllib.request
 from urllib.error import URLError
 
@@ -323,9 +324,10 @@ class HTTPUtil:
             print(e)
 
 
-
 class ShellNetworkUtil:
-    ''' This class provides functions to interact with Network using Shell script '''
+    ''' 
+    This class provides functions to interact with Network using Shell script.
+    '''
     
     @staticmethod
     def is_host_reachable(ip: str, timeout=1000, verbose=False) -> bool:
@@ -451,6 +453,9 @@ class ShellNetworkUtil:
 
 
 class SocketUtil:
+    '''
+    Utility for handling Python sockets
+    '''
     
     @staticmethod
     def udp_broadcast():
@@ -459,8 +464,8 @@ class SocketUtil:
     
     @staticmethod
     def send_udp_datagrams(
-        sock: socket.socket, 
-        data: bytes, 
+        sock:         socket.socket, 
+        data:         bytes, 
         segment_size: int,
     ) -> None:
         pass
@@ -471,8 +476,8 @@ class SocketUtil:
         sock:           socket.socket, 
         data:           bytes, 
         segment_size:   int,
-        timeout:        int = None,
-        verbose             = False
+        timeout:        int             = None,
+        verbose                         = False
     ) -> None:
         '''
         sending a datastream via `TCP`
