@@ -1,5 +1,5 @@
 ''' =================================================================
-| fileconverter.py -- tools/fileconverter.py
+| fileconverter.py -- pytools/fileconverter.py
 |
 | Created by Jack on 07/11/2023
 | Copyright © 2023 jacktogon. All rights reserved.

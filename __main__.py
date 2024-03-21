@@ -24,5 +24,13 @@ from .networkutils import *
 
 from .shell import *
 import sys
-nb = NonBlockingStreamReader(sys.stdin)
-pe = PersistentShell()
+pe = PersistentShell(True)
+
+try:
+    while True:
+        i = str(input("> "))
+        print(pe.run_command(i))
+except KeyboardInterrupt as e:
+    print("Keyboard Interrupted.")
+    
+# nb = NonBlockingStreamReader(sys.stdin)

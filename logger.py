@@ -1,8 +1,9 @@
 'sync/async Logging classes'
 
 """ =================================================================
-| logger.py
+| pytools/logger.py
 |
+| #Author Jack
 | Created by Jack on 01/20, 2024
 | Copyright © 2024 jacktogon. All rights reserved.
 ================================================================= """
@@ -135,10 +136,10 @@ class Logger:
         return self.__log(LogLevel.INFO, values, ta.RESET, start, end, is_async)
     
     def warn(self, *values, start="", end="\n", is_async: Optional[bool]=None):
-        return self.__log(LogLevel.WARN, values, ta.Foreground.BRIGHT_MAGENTA, start, end, is_async)
+        return self.__log(LogLevel.WARN, values, ta.FG.BRIGHT_MAGENTA, start, end, is_async)
     
     def debug(self, *values, start="", end="\n", is_async: Optional[bool]=None):
-        return self.__log(LogLevel.DEBUG, values, ta.Foreground.BRIGHT_YELLOW, start, end, is_async)
+        return self.__log(LogLevel.DEBUG, values, ta.FG.BRIGHT_YELLOW, start, end, is_async)
     
     def error(self, *values, start="", end="\n", is_async: Optional[bool]=None):
         return self.__log(LogLevel.ERROR, values, ta.Composition.ERROR, start, end, is_async)

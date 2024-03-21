@@ -1,3 +1,11 @@
+""" =================================================================
+| file.py  --  Projects/pytools/file.py
+|
+| #Author Jack
+| Created on 03/21, 2024
+| Copyright © 2024 jacktogon. All rights reserved.
+================================================================= """
+
 import os, csv, re, json
 from pathlib import Path
 from typing import Any, List, Tuple, Union, Callable, Literal, Dict
@@ -13,6 +21,7 @@ __all__ = (
 # Classes
 # ===========================================================================
 class JSONLoader():
+    '''Handle Tasks about JSON'''
     
     @staticmethod
     def read_jsonc(file_path: str, necessary_keys: List[str]=[]) -> Dict:
@@ -67,6 +76,7 @@ def read_file_generator(file_path: str, chunk_size: int):
             if not chunk: break
             yield chunk
 
+
 def write_filebytes(save_path: str, chunk: bytes, append=True):
     '''
     Writing/appending bytes to file efficiently
@@ -92,7 +102,8 @@ def write_filebytes(save_path: str, chunk: bytes, append=True):
     
     with open(_save_path, 'ab' if append else 'wb') as file:
         file.write(chunk)
-        
+
+
 def write_to_csv(
     headers:        List[str], 
     row_values:     List[Any], 

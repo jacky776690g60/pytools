@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 ''' =================================================================
-| healthcheck.py -- tools/healthcheck.py
+| healthcheck.py -- pytools/healthcheck.py
 |
 | Created by Jack on 07/11/2023
 | Copyright © 2023 jacktogon. All rights reserved.

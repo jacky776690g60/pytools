@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 """ =================================================================
-| foldertree.py -- tools/foldertree.py
+| foldertree.py -- pytools/foldertree.py
 |
-| Created by Jack on 07/11/2023
+| #Author Jack
+| Created on 07/11/2023
 | Copyright © 2023 jacktogon. All rights reserved.
 ================================================================= """
 

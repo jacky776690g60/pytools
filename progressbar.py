@@ -1,3 +1,11 @@
+""" =================================================================
+| progressbar.py  --  Projects/pytools/progressbar.py
+|
+| #Author Jack
+| Created on 07/21, 2023
+| Copyright © 2023 jacktogon. All rights reserved.
+================================================================= """
+
 import time, shutil, threading
 from typing import Callable, Dict, Tuple
 
@@ -40,23 +48,23 @@ class ProgressBar:
     FILL_CHARS  = ['█', '■', '☒', '▮', '▀', '◉', '=', '+']
     TRACK_CHARS = ['░', '⣀', '□', '▯', '▄', '◌', '-']
     STYLES: Dict[int, Tuple[str, str, str, str]] = {
-        0:  (ta.Foreground.WHITE,   TRACK_CHARS[0],     ta.Foreground.WHITE,    FILL_CHARS[1]),
-        1:  (ta.Foreground.YELLOW,  TRACK_CHARS[0],     ta.Foreground.BLUE,     FILL_CHARS[1]),
-        2:  (ta.Foreground.YELLOW,  TRACK_CHARS[0],     ta.Foreground.CYAN,     FILL_CHARS[1]),
-        3:  (ta.Foreground.GREEN,   TRACK_CHARS[0],     ta.Foreground.WHITE,    FILL_CHARS[1]),
-        4:  (ta.Foreground.WHITE,   TRACK_CHARS[0],     ta.Foreground.GREEN,    FILL_CHARS[1]),
-        5:  (ta.Foreground.CYAN,    TRACK_CHARS[0],     ta.Foreground.WHITE,    FILL_CHARS[1]),
-        6:  (ta.Foreground.WHITE,   TRACK_CHARS[2],     ta.Foreground.WHITE,    FILL_CHARS[2]),
-        7:  (ta.Foreground.YELLOW,  TRACK_CHARS[2],     ta.Foreground.BLUE,     FILL_CHARS[2]),
-        8:  (ta.Foreground.YELLOW,  TRACK_CHARS[2],     ta.Foreground.RED,      FILL_CHARS[2]),
-        9:  (ta.Foreground.GREEN,   TRACK_CHARS[2],     ta.Foreground.WHITE,    FILL_CHARS[2]),
-        10: (ta.Foreground.WHITE,   TRACK_CHARS[2],     ta.Foreground.GREEN,    FILL_CHARS[2]),
-        11: (ta.Foreground.BLUE,    TRACK_CHARS[2],     ta.Foreground.WHITE,    FILL_CHARS[2]),
-        12: (ta.Foreground.CYAN,    TRACK_CHARS[2],     ta.Foreground.WHITE,    FILL_CHARS[2]),
-        13: (ta.Foreground.CYAN,    TRACK_CHARS[6],     ta.Foreground.YELLOW,   FILL_CHARS[6]),
-        14: (ta.Foreground.CYAN,    TRACK_CHARS[6],     ta.Foreground.RED,      FILL_CHARS[6]),
-        15: (ta.Foreground.CYAN,    TRACK_CHARS[6],     ta.Foreground.RED,      FILL_CHARS[7]),
-        16: (ta.Foreground.CYAN,    TRACK_CHARS[4],     ta.Foreground.RED,      FILL_CHARS[4]),
+        0:  (ta.FG.WHITE,   TRACK_CHARS[0],     ta.FG.WHITE,    FILL_CHARS[1]),
+        1:  (ta.FG.YELLOW,  TRACK_CHARS[0],     ta.FG.BLUE,     FILL_CHARS[1]),
+        2:  (ta.FG.YELLOW,  TRACK_CHARS[0],     ta.FG.CYAN,     FILL_CHARS[1]),
+        3:  (ta.FG.GREEN,   TRACK_CHARS[0],     ta.FG.WHITE,    FILL_CHARS[1]),
+        4:  (ta.FG.WHITE,   TRACK_CHARS[0],     ta.FG.GREEN,    FILL_CHARS[1]),
+        5:  (ta.FG.CYAN,    TRACK_CHARS[0],     ta.FG.WHITE,    FILL_CHARS[1]),
+        6:  (ta.FG.WHITE,   TRACK_CHARS[2],     ta.FG.WHITE,    FILL_CHARS[2]),
+        7:  (ta.FG.YELLOW,  TRACK_CHARS[2],     ta.FG.BLUE,     FILL_CHARS[2]),
+        8:  (ta.FG.YELLOW,  TRACK_CHARS[2],     ta.FG.RED,      FILL_CHARS[2]),
+        9:  (ta.FG.GREEN,   TRACK_CHARS[2],     ta.FG.WHITE,    FILL_CHARS[2]),
+        10: (ta.FG.WHITE,   TRACK_CHARS[2],     ta.FG.GREEN,    FILL_CHARS[2]),
+        11: (ta.FG.BLUE,    TRACK_CHARS[2],     ta.FG.WHITE,    FILL_CHARS[2]),
+        12: (ta.FG.CYAN,    TRACK_CHARS[2],     ta.FG.WHITE,    FILL_CHARS[2]),
+        13: (ta.FG.CYAN,    TRACK_CHARS[6],     ta.FG.YELLOW,   FILL_CHARS[6]),
+        14: (ta.FG.CYAN,    TRACK_CHARS[6],     ta.FG.RED,      FILL_CHARS[6]),
+        15: (ta.FG.CYAN,    TRACK_CHARS[6],     ta.FG.RED,      FILL_CHARS[7]),
+        16: (ta.FG.CYAN,    TRACK_CHARS[4],     ta.FG.RED,      FILL_CHARS[4]),
     }
     '''
     - `track_color`

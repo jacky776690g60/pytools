@@ -1,9 +1,10 @@
 'This module consists of commonly used functions and classes.'
 
 """ =================================================================
-| base.py
+| base.py  --  Projects/pytools/base.py
 |
-| Created by Jack on 01/20, 2024
+| #Author Jack
+| Created on 03/21, 2024
 | Copyright © 2024 jacktogon. All rights reserved.
 ================================================================= """
 
@@ -119,7 +120,8 @@ class TermArtist:
         "Characters legible but marked as if for deletion. Not supported in Terminal.app"
         OVERLINE  = '\033[53m'
 
-    class Foreground():
+    class FG():
+        '''Foreground'''
         # Standard Colors
         BLACK           = "\033[30m"
         RED             = "\033[31m"
@@ -140,7 +142,8 @@ class TermArtist:
         BRIGHT_WHITE    = "\033[97m"
 
 
-    class Background():
+    class BG():
+        '''Background'''
         # Standard Colors
         BLACK         = "\033[40m"
         RED           = "\033[41m"
@@ -160,7 +163,8 @@ class TermArtist:
         BRIGHT_CYAN   = "\033[106m"
         BRIGHT_WHITE  = "\033[107m"
         
-    class Effect():
+    class FX():
+        '''Effects'''
         SLOWBLINK  = '\033[5m'
         RAPIDBLINK = '\033[6m'
         "MS-DOS ANSI.SYS, 150+ per minute; not widely supported"
@@ -218,11 +222,11 @@ class TimeConverter:
     @staticmethod
     def second_to_standard(sec: float) -> str:
         '''
-        Convert seconds to a ISO 8601 time format, without timezone
+        Convert seconds to a ISO 8601 time format, without timezone.
         If provided seconds is smaller, don't show.
 
-        Parameters:
-        -----------
+        Params:
+        -------
         - `sec`: Number of seconds
 
         Returns:
@@ -245,19 +249,14 @@ class TimeConverter:
         int_seconds, frac_seconds = divmod(seconds, 1)
 
         res = ""
-        if years > 0:
-            res += f"{int(years):02}-"
-        if months > 0:
-            res += f"{int(months):02}-"
-        if days > 0:
-            res += f"{int(days):02}T"
+        if years > 0:   res += f"{int(years):02}-"
+        if months > 0:  res += f"{int(months):02}-"
+        if days > 0:    res += f"{int(days):02}T"
             
         res += f"{int(hours):02}h:{int(minutes):02}m:"
         
-        if frac_seconds > 0:
-            res += f"{int(int_seconds):02}.{int(frac_seconds * 1e4):04}s"
-        else:
-            res += f"{int(int_seconds):02}s"
+        if frac_seconds > 0: res += f"{int(int_seconds):02}.{int(frac_seconds * 1e4):04}s"
+        else:                res += f"{int(int_seconds):02}s"
 
         return res
 
@@ -280,7 +279,8 @@ class TimeConverter:
         local_date   = utc_time.astimezone(sys_timezone)                # Convert to the local timezone
         date_string  = local_date.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] # Format datetime object, including milliseconds
         return f"{date_string} {local_date.tzname()}"
-    
+
+
     @staticmethod
     def time_to_seconds(time_str):
         parts = time_str.split(":")
@@ -311,9 +311,9 @@ def get_venv_path() -> str | None:
     return os.environ.get('VIRTUAL_ENV')
 
 def try_import_or_install(
-    module:     str,
-    package:    str     = None,
-    version:    str     = None
+    module:   str,
+    package:  str   = None,
+    version:  str   = None
 ) -> None:
     '''
     Attempts to import a module. If not present, attempts to install it.
@@ -330,7 +330,7 @@ def try_import_or_install(
     try:
         __import__(module)
     except ImportError:
-        print(f"Module {TermArtist.Foreground.BRIGHT_CYAN}{module}{TermArtist.RESET} not found and will be installed")
+        print(f"Module {TermArtist.FG.BRIGHT_CYAN}{module}{TermArtist.RESET} not found and will be installed")
         if not (
             get_venv_path() or hasattr(sys, 'real_prefix') or
             (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
@@ -360,4 +360,4 @@ def try_import_or_install(
         except ImportError as e:
             print(f"Module {module} could not be imported after installation: {e.with_traceback()}")
 
-    print(f"Module {TermArtist.Foreground.BRIGHT_CYAN}{module}{TermArtist.RESET} is now imported and ready to use.")
+    print(f"Module {TermArtist.FG.BRIGHT_CYAN}{module}{TermArtist.RESET} is now imported and ready to use.")
