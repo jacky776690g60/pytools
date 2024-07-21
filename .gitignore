@@ -1,2 +1,2 @@
 **/*.py
-!**/knot/refs/*.py
+!**/_knot/refs/*.py
